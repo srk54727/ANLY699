@@ -1,0 +1,220 @@
+---
+title             : "Research on Industrial Products Recommendation based on Colloborative Filtering"
+shorttitle        : "Industrial Products Recommender System"
+
+author: 
+  - name          : "Abhinav Nigam"
+    affiliation   : "1"
+    corresponding : no    # Define only one corresponding author
+    address       : "8421 Broad St, Unit 1314, McLean, VA - 22102"
+    email         : "anigam@my.harrisburgu.edu"
+
+affiliation:
+  - id            : "1"
+    institution   : "Harrisburg University of Science and Technology"
+
+Introduction: |
+  Placeholder text for now
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "Collaborative Filtering, Recommender Systems, Implicit Feedback, One-Class Classfication"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+# Abstract
+
+The study examined the usefulness and effectiveness of recommender systems for purchases made by industrial companies. The data was collected through the invoice system of an industrial supplier of mining equipment from 2016-2019. The recommendation system for the data was built using various algorithms such as user-based collaborative filtering, item-based collaborative filtering, popular items, association rules, and Bayesian personalized ranking. It was hypothesized that the recommender systems should be effective in predicting the next purchases of industrial companies and provide useful recommendations to the sales force. It was also hypothesized that, given the nature of binary purchase data, Bayesian personalized ranking would be most effective in recommending items. The findings of the project largely supported the hypothesis, as all the algorithms had significantly better AUC scores as compared to random recommendations. However, user-based collaborative filtering method was found to be the most effective in recommending items to industrial clients.
+
+\newpage
+
+# Introduction
+
+The research project aims to predict the next purchases of industrial companies based on historical data using collaborative filtering algorithms. The previous research on collaborative filtering has been limited to an individual person's preferences and purchase information. In this research, we want to verify whether the collaborative filtering algorithms can be applied to big companies making purchase decisions and whether companies, like individuals, behave similarly in their purchase decisions.
+
+The research is conducted on historical purchase data collected by the seller of industrial equipment using their internal invoicing system over 3 years. The research is purely quantitative with information available on the items bought by the companies. We processed the purchase information data into a matrix of users and items and split the dataset randomly into training and test datasets for model comparison.
+
+The research employed various popular collaborative filtering algorithms which have been found effective in person's purchase recommendations. Only purchase data is available from the invoicing system and linear ratings for the products are not available so we employed the algorithms which have been found effective for one-class classification collaborative filtering problem. 
+
+We provided the accuracy of various collaborative filtering methods on the dataset provided and verified if collaborative filtering methods are useful in predicting the purchasing patterns of industrial companies and provide a recommendation on applying collaborative filtering for industrial manufacturing applications.
+
+\newpage
+
+# Literature Review
+
+Collaborative filtering algorithms and recommender systems, in general, gained the interest of researchers after the invention of the internet. [@goldberg1992using] provided the earliest recommender system by using content tags and voting by users to recommend content to users through IBM intranet emails. Even though people and companies were buying things physically before the internet, recommender systems were not a primary research topic which might be primarily due to the restricted amount of data available. The interest in collaborative filtering grew with the adoption of the internet and the amount of the data collected through online systems. [@resnick1997recommender] provided an overview of the recommender systems used in early adopters GroupLens, Fab & Referral Web, PHOAKS and Siteseer which used the recommender systems to show sorted display of preferred items or URLs by the users of the service. The limitation of these early datasets was that they used explicit rating data from users and measured similarity between individual users to predict affinity towards other content which might be of interest. Most of the interaction of the users with items or content online is implicit and most users do not provide explicit rating.
+
+[@sarwar2001item] provided a new methodology to provide top-N item recommendations based on item-based similarity instead of user-based similarity and validating on an open-source dataset from MovieLens, an online database for predicting ratings of movies by individual users. The method was also useful because of precomputed model of item similarity which increased the online scalability of recommendations in large datasets and introduced adjusted cosine similarity function to account for differences in scale of user ratings. For e.g., a good rating for one user might be 8 out of 10 but for some other user a good rating might be 6 out of 10. However, the research was still limited to dataset with explicit user rating and online content. Further evaluation of the available techniques was done in [@karypis2001evaluation], [@deshpande2004item] using various similarity measures but still restricting the research to online individual user dataset on eCommerce purchases, MovieLens, and online catalog sales. [@karypis2001evaluation] evaluated the item-based top-N recommendation algorithm using cosine and conditional probability with normalized similarity and found out that item-based collaborative filtering algorithms were 15-30% more effective than user-based algorithms while also being computationally less demanding. [@deshpande2004item] also evaluated the item-based collaborative filtering algorithms combining existing algorithms with interpolated higher-order item-based top-N recommendation systems and validated improvement in performance on both real world and synthetic datasets. None of the research focused on buying behavior similarity based on organization or industrial companies and restricted to individuals. [@lee2005classification] proposed a new method by building logistic models to recommend items to individuals and validated their approach with EachMovie dataset which contained individual rankings of the users on various movies. However, one drawback of the proposed approach with logistic models was precomputing many models which requires high computational power which might not be able to provide dynamic recommendations especially in online retail environment with thousands of items.
+
+Most of the available dataset on users’ preferences contains implicit feedback based on whether the individual purchased or interacted with the item. In such datasets, explicit feedback or rating is not provided by the users and hence there is no availability of negative ratings or feedback. Previous approaches for implicit feedback recommender systems either modeled all missing values as negative [@das2007google] or all missing values as unknown, both of which are extreme methods as it is difficult to find out whether the missing values are a dislike for the item or ignorance about the item. [@pan2008one] defined this as one-class collaborative filtering (OCCF) and proposed negative example weighting by giving different weights to error terms of positive examples and negative examples, and negative example sampling which meant sampling some missing values as negative to improve the previous algorithms. [@pan2008one] validated the two new proposed methods on Yahoo news dataset and a social bookmarking dataset which provided individual users interaction with the content. The algorithm performed better than existing algorithms at the time but again the research solely focused on individual users and not group buying behavior. [@hu2008collaborative] used repeated purchases data to define confidence in the ratings using data from digital television service. [@pan2009mind] further refined the OCCF systems by using probabilistic latent semantic indexing (pLSI) and alternating least squares (ALS) methods to tackle large datasets with binary data to assign weights to missing values. The authors again used online individual-based datasets from Yahoo News and delicious.com for their approach.
+
+[@rendle2009bpr] proposed a new approach using pairwise regression using Bayesian personalized ranking (BPR) to improve existing OCCF systems by measuring relative preference over a pair of items. Pairwise methods take implicit feedback as relative preferences rather than absolute ones, e.g., a user is assumed to prefer an item i to an item j if the user-item pair (u, i) is observed, and (u, j) is not observed. The research utilized 2 datasets for application. One dataset is from an online shop and the other dataset utilized is from the Netflix DVD rental dataset to predict which item the individual customer will buy next. The two assumptions in the proposed approach were individual preference over two items and independence between two users. The validation datasets for BPR too were focused on online interactions and individual users. [@pan2013gbpr] builds on BPR by eliminating the two assumptions and proposes group Bayesian Personalized Ranking (GBPR) which combined individual preferences of items for users and group preference of similar users for an item. Their proposed algorithm is found to be more effective than previous work while validating their research on MovieLens 100k dataset and a subset of the Netflix prize dataset from the 2007 competition. [@he2016vbpr] extended the BPR recommender system proposed by [@rendle2009bpr] by adding visual features of the items for recommending items to users during online shopping where the visual properties of the article are crucial. Their system performed better than the recommender system only algorithms and takes care of cold-start problem by grouping similar looking items together. The algorithm again worked on the underlying assumption of individual users having similar taste in aesthetics and need.
+
+While most studies on recommender systems on implicit rating data which is typically sparse use basic collaborative filtering algorithms, [@najafabadi2017improving] provided a novel approach by using association rule mining technique on Million Song dataset taking into account number of plays of a song and category of songs played to provide better recommendations to users than basic collaborative filtering algorithms. None of the research in collaborative filtering researched whether non-individual users such as big groups, companies, educational institutions also exhibit similar behavior in their choice of products and buying behavior.
+
+All the research in recommender systems focused exclusively on online datasets and with individual user feedback whether explicit or implicit. The recommender systems have grown with the adoption of the internet and with the availability of publicly available datasets on the web. Access to the datasets has enabled researchers to develop and verify collaborative filtering algorithms. A big gap in the research, however, lied in the application or development of collaborative filtering algorithms where the user is not an individual watching a movie or shopping online but large companies facing purchase decisions on equipment worth millions of dollars. It is implicit in the research that users will behave similarly which has been verified extensively in the research. We were able to utilize collaborative filtering algorithms for predicting purchase decisions of industrial companies which would significantly give an advantage to the sellers in being proactive in anticipating and fulfilling the requirements of their customer base. We expect significant cost savings and sales increase with the adoption of recommender systems in an industrial sales and manufacturing setting.
+
+\newpage
+
+# Methodology
+
+The primary aim of the study was to evaluate whether recommender systems are useful in recommending items to industrial companies and evaluate the effectiveness of different collaborative filtering algorithms for recommending items. 
+
+## Participants
+
+The participants in the data collection process are the buyers of the industrial equipment manufacturing company which primarily sells mining equipment. The data collected is from the internal invoicing system which was collected over 3 years from Jan-2016 to Dec-2019. The data has the purchase history for 24,412 unique companies located in 96 different countries and 104 items sold through the manufacturer.
+
+The collected data also includes information on the high-level product categories and low-level product categories to define the granularity of the product sold. The customers are uniquely identified by the customer number in the company system. Additional information such as the quantity of product sold, the average price of the item and date of sale was also provided in the data. However, that information was not included in our study as we solely focused on item recommendation and not profitability or any other metric.
+
+Overall, we had ~776k invoice records collected for the customers with each sale recorded as a single entry with customer information and date of the purchase for 104 individual products sold by the company to 24,412 companies.
+
+## Procedure
+
+The data was collected through the internal invoicing system of the company on buyers of the industrial equipment sold by the company. The data was collected for 3 years for the hardware division of the manufacturing company.
+
+## Measures
+
+The collected data contains information on the date of the purchase or return, product type, quantity of the item sold, average price per item sold, total price of the invoice. Other information such as booked date, shipment date, expected and actual fulfillment date, and cost margin are also present in the data. For the study, we only utilized the customer and item description information as those are the inputs that are useful for recommender systems.
+
+The recommender systems were evaluated on the area under the ROC curve (AUC). AUC measures the area under the curve where the Y-axis is True Positive Rate and X-axis is False Positive Rate for different values of the number of items recommended by the model. AUC value is between 0 and 1 with 1 being a perfect predicting model. Random recommendations have an AUC of 0.5. The Precision and Recall metrics for the models were also measured to observe the performance of the recommender systems. Precision is defined as a fraction of relevant recommendations, and recall is the same as true positive rate. The calculation methodology for the four metrics utilized for the recommender systems is provided below.
+
+True Positive Rate (TPR) / Recall = $\frac{True Positive}{True Positive + False Negative}$
+
+False Positive Rate (FPR) = $\frac{False Positive}{True Negative + False Positive}$
+
+Precision = $\frac{True Positive}{True Positive + False Positive}$
+
+\newpage
+
+## Data Processing
+
+The first part of the analysis was pre-processing and cleaning up the data to make it suitable for our research. The steps used for pre-processing the dataset are outlined below:
+
+1. Removed records with missing customer ID since those cannot be utilized for the study
+
+2. Removed records with incomplete or missing item description as we cannot identify the item sold or returned without valid description
+
+3. Removed records with returns of items as we are only interested in items sold to the companies. Corresponding records of sales which eventually resulted in a return of the item were also removed from the dataset
+
+4. Removed duplicates of the same item bought by a company multiple times. Unique combinations of customer ID and item descriptions were kept in the dataset for the user-item matrix required for collaborative filtering algorithms. Multiple purchases of the same item may be just due to extra demand or partial orders placed by the company and does not necessarily mean more interest in the item
+
+5. Removed customers who have bought only one item in the period. Customers who bought only one item are not useful in improving the recommendation of the system and made it difficult for evaluating the recommender systems due to the non-existence of the second item to verify recommendations and evaluate collaborative filtering models. 
+
+6. Converted the dataset into a user-item matrix format where all the users are listed as rows and the items are listed as columns. If the customer u purchased the item i, then the element $X_{u,i}$ of the matrix will be 1, else the element will be null or zero depending on the recommender algorithm. After the pre-processing of the dataset, we had a matrix with 15,004 users and 103 items for the study. The sparsity of the matrix is ~95% which is sufficient for most recommender systems
+
+7. Once the matrix structure was complete, the dataset was split into training and test dataset using the R package (RecommenderLab) for collaborative filtering. The package removed some purchases present in the dataset randomly for some of the customers and leaves the rest of the dataset as-is. We utilized R Studio software for the analysis, but we also used Python for Bayesian Personalize Ranking model as the implementation of the model in Python is more efficient for the large dataset
+
+\newpage
+
+# Analysis & Results
+
+The first model for the analysis was a random recommendation model that provided item recommendations at random without any predictive methodology. Random recommendation model is important for comparison purposes as it is used as a baseline against which other models are compared to check if the models are providing better recommendations. The random recommendation model resulted in a straight diagonal line on the ROC graph resulting in ~53% AUC. This provides us the baseline that our models should have AUC better than 50% to be considered better than random item recommendations.
+
+The popular items model which provides recommendations just based on decreasing order of item popularity where item popularity is measured by the probability of an item being bought in the test dataset. The AUC of the model increased to ~91% with popular items suggesting that there are items in our dataset which are bought with more frequency by multiple companies and using a simple algorithm to suggest items to sell can be effective.
+
+The association rule mining model also showed significant improvement in AUC over random recommendations with AUC of ~90%. However, the popular items model had better performance and is less extensive to implement on large datasets.
+
+Bayesian personalized ranking (BPR) model uses triplets of items to measure customer preference to an item over another item. BPR is the most demanding in terms of computing power required compared to other models but led to slightly reduced predictive performance compared to other models. The AUC for BPR was only ~81% on the test dataset.
+
+Item-based collaborative filtering model measures similarity among various items based on the cosine similarity metric. There are various methods to measure similarity such as correlation, Jaccard distance, etc. but we found that cosine similarity gave the best results for our recommendation system. The performance of the item-based similarity model was similar to BPR and less than popular items and association rules models with an AUC of ~82%.
+
+The user-based collaborative filtering model is similar to the item-based model but in this model, the similarity is measured among users instead of items. Based on the performance measurement of the user-based collaborative filtering model, this model has the highest prediction score of all the other models with an AUC of ~95%. The model significantly outperformed the other models tested. The higher recommendation capability is also clearly visible in Figure 1 (ROC graph) and Figure 2 (Precision-Recall graph).
+
+Based on the results of the models, we can conclude that the user-based collaborative filtering models have the highest recommendation power among all the models compared in this study. The AUC of ~95% is significantly higher compared to the random recommendation model and proves that recommender models are useful in these cases of industrial company's purchase recommendations. The AUC of recommender system models is provided in table 1 in the appendix.
+
+\newpage
+
+# Conclusion
+
+The research study proves that the recommender system is useful not just in situations where the user is a human being but also in cases where the user is a large industrial company. Recommender systems can help provide suggestions to field sales force on the items that existing or potential clients might be interested in buying and removes the guessing approach and due diligence on the part of the sales force to go through the roster of hundreds of products or years of sales history to understand the requirement of the customer.
+
+The study also established that user-based collaborative filtering is the most useful in item recommendation for industrial companies which might be in part due to companies with similar sizes and in similar sectors might have similar product requirements.
+
+Future studies should continue to look at the usefulness of recommender systems with more data as the current study had data for only ~15k users. Also, real-world comparison of product recommendation from recommender systems compared to recommendations from salesforce would be interesting to look at.
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+<div id = "refs"></div>
+
+\newpage
+
+# Appendix
+
+```{r table1, message=FALSE, warning=FALSE,results='asis'}
+auc <- matrix(c(0.532,0.915,0.896,0.808,0.818,0.945),ncol=1,byrow=TRUE)
+colnames(auc) <- c("Area Under Curve (AUC)")
+rownames(auc) <- c("Random Items","Popular Items","Association Rules", "Bayesian Ranking", "Item-Based CF", "User-Based CF")
+auc <- as.table(auc)
+require(pander)
+panderOptions('table.split.table', Inf)
+set.caption("AUC of Recommender Systems")
+pander(auc, style = 'rmarkdown')
+```
+
+```{r figs1, message=FALSE, warning=FALSE, fig.cap="\\label{fig:figs}ROC Curve for Recommender Systems"}
+setwd("C:/Users/abhin/OneDrive - Harrisburg University/ANLY 699 - Applied Project/Project Paper")
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(lubridate)
+library(skimr)                
+library(knitr)                
+library(treemap)
+results_tbl <- read.csv("results_tbl_103items.csv")
+results_tbl %>%
+  ggplot(aes(FPR, TPR, 
+             colour = fct_reorder2(as.factor(name), 
+                                   FPR, TPR))) +
+  geom_line() +
+  geom_label(aes(label = n))  +
+  labs(title = "ROC curves", colour = "Model") +
+  theme_grey(base_size = 14) + ylab("True Positive Rate") + xlab("False Positive Rate")
+```
+
+```{r figs2, message=FALSE, warning=FALSE, fig.cap="\\label{fig:figs}Precision-Recall Curve for Recommender Systems"}
+results_tbl %>%
+  ggplot(aes(recall, precision, 
+             colour = fct_reorder2(as.factor(name),  
+                                   precision, recall))) +
+  geom_line() +
+  geom_label(aes(label = n))  +
+  labs(title = "Precision-Recall curves", colour = "Model") +
+  theme_grey(base_size = 14) + xlab("Recall") + ylab("Precision")
+```
+
+
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+
+\endgroup
